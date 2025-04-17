@@ -50,13 +50,41 @@ def menu():
             print("Opción inválida.")
 
 def registrarse():
-    usuario = input("Ingrese un nombre de usuario: ")
+    print("---- Registro de Usuario ----")
+         
+    while True :
+        usuario = input("Ingrese un nombre de usuario: ")
+        errores = []
+        if not validar_usuario(usuario):
+            errores.append("El usuario debe tener al menos 5 caracteres")
+        elif not tiene_mayuscula(usuario):
+            errores.append(" El usuario debe tener al menos una letra mayúscula")
+        elif not errores:
+            break  # El usuario es válido
+        else:
+            print(" El nombre de usuario no es válido:")
+            for error in errores:
+                print(error)
+            print("Intentalo de nuevo.\n")
+        
     if usuario in users:
         print("El usuario ya existe.")
     else:
         contrasena = input("Ingrese una contraseña: ")
         users[usuario] = contrasena
         print("Registro exitoso.")
+
+def validar_usuario(usuario):
+    return len(usuario) >= 5 
+
+import re
+
+def tiene_mayuscula(usuario):
+    mayuscula = re.search(r"[A-Z]", usuario)
+    if mayuscula : 
+        return True
+    else:
+        return False
 
 def iniciar_sesion():
     global usuario_actual
