@@ -2,7 +2,7 @@
 
 from viewer import ver_pelicula, ver_valoraciones_personales, ver_puntuacion_pelicula
 from search import buscar_pelicula
-from admin import agregar_pelicula
+from admin import agregar_pelicula, eliminar_pelicula
 
 def menu(usuario_actual, users, peliculas, valoraciones):
     while True:
@@ -13,6 +13,7 @@ def menu(usuario_actual, users, peliculas, valoraciones):
         print("4. Ver Puntuación de una Película")
         if users[usuario_actual]["rol"] == "admin":
             print("5. Agregar Película")
+            print("6. Eliminar Película")
         print("0. Cerrar Sesión")
 
         opcion = input("Seleccione una opción: ")
@@ -27,6 +28,8 @@ def menu(usuario_actual, users, peliculas, valoraciones):
             ver_puntuacion_pelicula(peliculas, valoraciones)
         elif opcion == "5" and users[usuario_actual]["rol"] == "admin":
             agregar_pelicula(peliculas)
+        elif opcion == "6" and users[usuario_actual]["rol"] == "admin":
+            eliminar_pelicula(peliculas)
         elif opcion == "0":
             print("Cerrando sesión...")
             break
