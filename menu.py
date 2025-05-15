@@ -3,7 +3,8 @@
 from viewer import ver_pelicula, ver_valoraciones_personales, ver_puntuacion_pelicula
 from search import buscar_pelicula, buscar_por_autor, buscar_por_genero
 from admin import agregar_pelicula, eliminar_pelicula, modificar_pelicula, listar_peliculas, crear_usuario, modificar_usuario, eliminar_usuario, listar_usuarios, listar_autores, modificar_autor, listar_generos, modificar_genero
-from utilidades import ordenar_peliculas_por_anio, peliculas_del_director, mostrar_info_basica, mostrar_generos_unicos
+from utilidades import ordenar_peliculas_por_anio, peliculas_del_director, mostrar_info_basica, mostrar_generos_unicos, top_3_peliculas
+
 
 def menu(usuario_actual, users, peliculas, valoraciones):
     while True:
@@ -24,21 +25,23 @@ def menu(usuario_actual, users, peliculas, valoraciones):
         print("8. Películas por director")
         print("9. Info básica (título y año)")
         print("10. Ver géneros únicos")
+        print("11. Top 3 películas mejor valoradas")
+
 
         if users[usuario_actual]["rol"] == "admin":
             print("\n🛠️  FUNCIONES DE ADMINISTRADOR")
-            print("11. Agregar Película")
-            print("12. Eliminar Película")
-            print("13. Modificar Película")
-            print("14. Ver Lista de Películas")
-            print("15. Crear Usuario")
-            print("16. Modificar Usuario")
-            print("17. Eliminar Usuario")
-            print("18. Ver Usuarios Registrados")
-            print("19. Ver Autores")
-            print("20. Modificar Autor")
-            print("21. Ver Géneros")
-            print("22. Modificar Género")
+            print("12. Agregar Película")
+            print("13. Eliminar Película")
+            print("14. Modificar Película")
+            print("15. Ver Lista de Películas")
+            print("16. Crear Usuario")
+            print("17. Modificar Usuario")
+            print("18. Eliminar Usuario")
+            print("19. Ver Usuarios Registrados")
+            print("20. Ver Autores")
+            print("21. Modificar Autor")
+            print("22. Ver Géneros")
+            print("23. Modificar Género")
 
         print("\n0. 🔒 Cerrar Sesión")
         print("-" * 50)
@@ -67,31 +70,33 @@ def menu(usuario_actual, users, peliculas, valoraciones):
             mostrar_info_basica(peliculas)
         elif opcion == "10":
             mostrar_generos_unicos(peliculas)
+        elif opcion == "11":
+            top_3_peliculas(valoraciones)
 
         # Funciones de admin
-        elif opcion == "11" and users[usuario_actual]["rol"] == "admin":
-            agregar_pelicula(peliculas)
         elif opcion == "12" and users[usuario_actual]["rol"] == "admin":
-            eliminar_pelicula(peliculas)
+            agregar_pelicula(peliculas)
         elif opcion == "13" and users[usuario_actual]["rol"] == "admin":
-            modificar_pelicula(peliculas)
+            eliminar_pelicula(peliculas)
         elif opcion == "14" and users[usuario_actual]["rol"] == "admin":
-            listar_peliculas(peliculas)
+            modificar_pelicula(peliculas)
         elif opcion == "15" and users[usuario_actual]["rol"] == "admin":
-            crear_usuario(users)
+            listar_peliculas(peliculas)
         elif opcion == "16" and users[usuario_actual]["rol"] == "admin":
-            modificar_usuario(users)
+            crear_usuario(users)
         elif opcion == "17" and users[usuario_actual]["rol"] == "admin":
-            eliminar_usuario(users)
+            modificar_usuario(users)
         elif opcion == "18" and users[usuario_actual]["rol"] == "admin":
-            listar_usuarios(users)
+            eliminar_usuario(users)
         elif opcion == "19" and users[usuario_actual]["rol"] == "admin":
-            listar_autores(peliculas)
+            listar_usuarios(users)
         elif opcion == "20" and users[usuario_actual]["rol"] == "admin":
-            modificar_autor(peliculas)
+            listar_autores(peliculas)
         elif opcion == "21" and users[usuario_actual]["rol"] == "admin":
-            listar_generos(peliculas)
+            modificar_autor(peliculas)
         elif opcion == "22" and users[usuario_actual]["rol"] == "admin":
+            listar_generos(peliculas)
+        elif opcion == "23" and users[usuario_actual]["rol"] == "admin":
             modificar_genero(peliculas)
 
         elif opcion == "0":

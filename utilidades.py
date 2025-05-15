@@ -25,3 +25,30 @@ def mostrar_generos_unicos(peliculas):
     print("Géneros únicos en la base de datos:")
     for genero in sorted(generos):
         print(f"- {genero}")
+
+def top_3_peliculas(valoraciones):
+    if not valoraciones:
+        print("Todavía no hay valoraciones registradas.")
+        return
+
+    promedios = {}
+
+    for val in valoraciones:
+        nombre = val[1]
+        puntaje = int(val[2])
+        if nombre not in promedios:
+            promedios[nombre] = [0, 0]
+        promedios[nombre][0] += puntaje
+        promedios[nombre][1] += 1
+
+    lista_promedios = []
+    for nombre, datos in promedios.items():
+        promedio = datos[0] / datos[1]
+        lista_promedios.append((nombre, promedio))
+
+    lista_ordenada = sorted(lista_promedios, key=lambda x: x[1], reverse=True)
+    top_3 = lista_ordenada[:3]
+
+    print("\n🎖️ Top 3 películas mejor valoradas:")
+    for nombre, promedio in top_3:
+        print(f"- {nombre}: {promedio:.2f} puntos")
