@@ -5,14 +5,41 @@ def agregar_pelicula(peliculas):
     print("\n" + "-" * 50)
     print("🎞️  CARGA DE NUEVA PELÍCULA".center(50))
     print("-" * 50)
-    nombre = input("🎬 Nombre: ")
-    autor = input("🎬 Director: ")
-    anio = input("📅 Año de estreno: ")
-    genero = input("🎭 Género: ")
+
+    # Validar nombre
+    while True:
+        try:
+            nombre = input("🎬 Nombre: ").strip()
+            if not nombre:
+                raise ValueError("El nombre no puede estar vacío.")
+            break
+        except ValueError as e:
+            print(f"⚠️  Error: {e}")
+
+    # Validar autor
+    while True:
+        try:
+            autor = input("🎬 Director: ").strip()
+            if not autor:
+                raise ValueError("El director no puede estar vacío.")
+            break
+        except ValueError as e:
+            print(f"⚠️  Error: {e}")
+
+    # Validar año
+    while True:
+        try:
+            anio = input("📅 Año de estreno: ").strip()
+            if not anio.isdigit() or len(anio) != 4:
+                raise ValueError("Ingresá un año válido de 4 cifras.")
+            break
+        except ValueError as e:
+            print(f"⚠️  Error: {e}")
+
+    genero = input("🎭 Género: ").strip()
     nueva_peli = [nombre, autor, anio, genero]
     peliculas.append(nueva_peli)
-    print("Película agregada con éxito.")
-
+    print("✅ Película agregada con éxito.")
 
 
 def eliminar_pelicula(peliculas):
