@@ -1,3 +1,5 @@
+from data import generos
+
 def ordenar_peliculas_por_anio(peliculas):
     peliculas_ordenadas = sorted(peliculas, key=lambda x: x[2])
     print("\nPelículas ordenadas por año:")
@@ -21,9 +23,8 @@ def mostrar_info_basica(peliculas):
         print(f"Título: {info[0]}, Año: {info[1]}")
 
 def mostrar_generos_unicos(peliculas):
-    generos = {peli[3] for peli in peliculas}  # conjunto (set)
-    print("Géneros únicos en la base de datos:")
-    for genero in sorted(generos):
+    print("Géneros disponibles en el sistema:")
+    for genero in generos.values():
         print(f"- {genero}")
 
 def top_3_peliculas(valoraciones):

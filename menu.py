@@ -1,10 +1,8 @@
 # menu.py
-
 from viewer import ver_pelicula, ver_valoraciones_personales, ver_puntuacion_pelicula
 from search import buscar_pelicula, buscar_por_autor, buscar_por_genero
-from admin import agregar_pelicula, eliminar_pelicula, modificar_pelicula, listar_peliculas, crear_usuario, modificar_usuario, eliminar_usuario, listar_usuarios, listar_autores, modificar_autor, listar_generos, modificar_genero
+from admin import agregar_pelicula, eliminar_pelicula, modificar_pelicula, listar_peliculas, crear_usuario, modificar_usuario, eliminar_usuario, listar_usuarios, listar_autores, modificar_autor, listar_generos
 from utilidades import ordenar_peliculas_por_anio, peliculas_del_director, mostrar_info_basica, mostrar_generos_unicos, top_3_peliculas
-
 
 def menu(usuario_actual, users, peliculas, valoraciones):
     while True:
@@ -27,21 +25,12 @@ def menu(usuario_actual, users, peliculas, valoraciones):
         print("10. Ver géneros únicos")
         print("11. Top 3 películas mejor valoradas")
 
-
         if users[usuario_actual]["rol"] == "admin":
             print("\n🛠️  FUNCIONES DE ADMINISTRADOR")
-            print("12. Agregar Película")
-            print("13. Eliminar Película")
-            print("14. Modificar Película")
-            print("15. Ver Lista de Películas")
-            print("16. Crear Usuario")
-            print("17. Modificar Usuario")
-            print("18. Eliminar Usuario")
-            print("19. Ver Usuarios Registrados")
-            print("20. Ver Autores")
-            print("21. Modificar Autor")
-            print("22. Ver Géneros")
-            print("23. Modificar Género")
+            print("12. Gestión de Películas")
+            print("13. Gestión de Usuarios")
+            print("14. Gestión de Autores")
+            print("15. Gestión de Géneros")
 
         print("\n0. 🔒 Cerrar Sesión")
         print("-" * 50)
@@ -73,34 +62,93 @@ def menu(usuario_actual, users, peliculas, valoraciones):
         elif opcion == "11":
             top_3_peliculas(valoraciones)
 
-        # Funciones de admin
+        # Submenús del administrador
         elif opcion == "12" and users[usuario_actual]["rol"] == "admin":
-            agregar_pelicula(peliculas)
+            menu_peliculas(peliculas)
         elif opcion == "13" and users[usuario_actual]["rol"] == "admin":
-            eliminar_pelicula(peliculas)
+            menu_usuarios(users)
         elif opcion == "14" and users[usuario_actual]["rol"] == "admin":
-            modificar_pelicula(peliculas)
+            menu_autores(peliculas)
         elif opcion == "15" and users[usuario_actual]["rol"] == "admin":
-            listar_peliculas(peliculas)
-        elif opcion == "16" and users[usuario_actual]["rol"] == "admin":
-            crear_usuario(users)
-        elif opcion == "17" and users[usuario_actual]["rol"] == "admin":
-            modificar_usuario(users)
-        elif opcion == "18" and users[usuario_actual]["rol"] == "admin":
-            eliminar_usuario(users)
-        elif opcion == "19" and users[usuario_actual]["rol"] == "admin":
-            listar_usuarios(users)
-        elif opcion == "20" and users[usuario_actual]["rol"] == "admin":
-            listar_autores(peliculas)
-        elif opcion == "21" and users[usuario_actual]["rol"] == "admin":
-            modificar_autor(peliculas)
-        elif opcion == "22" and users[usuario_actual]["rol"] == "admin":
-            listar_generos(peliculas)
-        elif opcion == "23" and users[usuario_actual]["rol"] == "admin":
-            modificar_genero(peliculas)
+            menu_generos(peliculas)
 
         elif opcion == "0":
             print("Cerrando sesión...")
+            break
+        else:
+            print("Opción inválida.")
+
+# SUBMENÚS
+
+def menu_peliculas(peliculas):
+    while True:
+        print("\n🎞️  GESTIÓN DE PELÍCULAS")
+        print("1. Agregar Película")
+        print("2. Modificar Película")
+        print("3. Eliminar Película")
+        print("4. Ver Lista de Películas")
+        print("0. Volver")
+        opcion = input("Seleccione una opción: ")
+        if opcion == "1":
+            agregar_pelicula(peliculas)
+        elif opcion == "2":
+            modificar_pelicula(peliculas)
+        elif opcion == "3":
+            eliminar_pelicula(peliculas)
+        elif opcion == "4":
+            listar_peliculas(peliculas)
+        elif opcion == "0":
+            break
+        else:
+            print("Opción inválida.")
+
+def menu_usuarios(users):
+    while True:
+        print("\n👤  GESTIÓN DE USUARIOS")
+        print("1. Crear Usuario")
+        print("2. Modificar Usuario")
+        print("3. Eliminar Usuario")
+        print("4. Ver Usuarios Registrados")
+        print("0. Volver")
+        opcion = input("Seleccione una opción: ")
+        if opcion == "1":
+            crear_usuario(users)
+        elif opcion == "2":
+            modificar_usuario(users)
+        elif opcion == "3":
+            eliminar_usuario(users)
+        elif opcion == "4":
+            listar_usuarios(users)
+        elif opcion == "0":
+            break
+        else:
+            print("Opción inválida.")
+
+def menu_autores(peliculas):
+    while True:
+        print("\n🎬  GESTIÓN DE AUTORES")
+        print("1. Ver Autores")
+        print("2. Modificar Autor")
+        print("0. Volver")
+        opcion = input("Seleccione una opción: ")
+        if opcion == "1":
+            listar_autores(peliculas)
+        elif opcion == "2":
+            modificar_autor(peliculas)
+        elif opcion == "0":
+            break
+        else:
+            print("Opción inválida.")
+
+def menu_generos(peliculas):
+    while True:
+        print("\n🎭  GESTIÓN DE GÉNEROS")
+        print("1. Ver Géneros Disponibles")
+        print("0. Volver")
+        opcion = input("Seleccione una opción: ")
+        if opcion == "1":
+            listar_generos(peliculas)
+        elif opcion == "0":
             break
         else:
             print("Opción inválida.")

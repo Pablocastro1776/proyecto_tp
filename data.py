@@ -11,3 +11,26 @@ peliculas = [
 ]
 
 valoraciones = []
+
+generos = {
+    "1": "Acción",
+    "2": "Aventura",
+    "3": "Animación",
+    "4": "Biografía",
+    "5": "Ciencia Ficción",
+    "6": "Comedia",
+    "7": "Crimen",
+    "8": "Documental",
+    "9": "Drama",
+    "10": "Familia",
+    "11": "Fantasía",
+    "12": "Historia",
+    "13": "Musical",
+    "14": "Misterio",
+    "15": "Romance",
+    "16": "Suspenso",
+    "17": "Terror",
+    "18": "Guerra",
+    "19": "Western",
+    "20": "Deporte"
+}
