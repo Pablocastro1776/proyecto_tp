@@ -1,6 +1,7 @@
 # viewer.py
 import re
-
+from data import guardar_valoraciones
+    
 def ver_pelicula(peliculas, valoraciones, usuario_actual):
     try:
         patron = input("Escribí el nombre (o parte) de la película que querés ver: ")
@@ -34,6 +35,7 @@ def ver_pelicula(peliculas, valoraciones, usuario_actual):
                         print(f"⚠️ {e}")
 
                 valoraciones.append([usuario_actual, peli[0], str(puntaje)])
+                guardar_valoraciones(valoraciones)
                 print("¡Gracias por valorar la película!")
             else:
                 print("Selección inválida.")

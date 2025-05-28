@@ -1,5 +1,6 @@
 import re
-from data import generos
+from data import generos, guardar_peliculas, guardar_usuarios
+
 
 def agregar_pelicula(peliculas):
     print("\n" + "-" * 50)
@@ -48,6 +49,7 @@ def agregar_pelicula(peliculas):
 
     nueva_peli = [nombre, autor, anio, genero]
     peliculas.append(nueva_peli)
+    guardar_peliculas(peliculas)
     print("✅ Película agregada con éxito.")
 
 
@@ -71,6 +73,7 @@ def eliminar_pelicula(peliculas):
             if 1 <= seleccion <= len(coincidencias):
                 peli_eliminada = coincidencias[seleccion - 1]
                 peliculas.remove(peli_eliminada)
+                guardar_peliculas(peliculas)
                 print(f"Película eliminada: {peli_eliminada[0]}")
             else:
                 print("Selección inválida.")
@@ -132,7 +135,7 @@ def modificar_pelicula(peliculas):
                     peli[2] = nuevo_anio
                 if nuevo_genero:
                     peli[3] = nuevo_genero
-
+                guardar_peliculas(peliculas)
                 print("Película modificada con éxito.")
             else:
                 print("Selección inválida.")
@@ -154,6 +157,7 @@ def crear_usuario(users):
             print("Rol inválido. Se asigna 'usuario' por defecto.")
             rol = "usuario"
         users[nombre] = {"rol": rol, "password": password}
+        guardar_usuarios(users)
         print("Usuario creado correctamente.")
     except Exception as e:
         print(f"⚠️  Error al crear usuario: {e}")
@@ -173,6 +177,7 @@ def modificar_usuario(users):
             users[nombre]["password"] = nueva_contra
         if nuevo_rol in ["usuario", "admin"]:
             users[nombre]["rol"] = nuevo_rol
+        guardar_usuarios(users)
         print("Usuario actualizado correctamente.")
     except Exception as e:
         print(f"⚠️  Error al modificar usuario: {e}")
@@ -188,6 +193,7 @@ def eliminar_usuario(users):
             confirmacion = input(f"¿Estás seguro que querés eliminar al usuario '{nombre}'? (s/n): ")
             if confirmacion.lower() == "s":
                 del users[nombre]
+                guardar_usuarios(users)
                 print("Usuario eliminado correctamente.")
         else:
             print("Usuario no encontrado.")
@@ -226,6 +232,7 @@ def modificar_autor(peliculas):
         for peli in peliculas:
             if peli[1] == autor_actual:
                 peli[1] = nuevo_autor
+        guardar_peliculas(peliculas)
         print(f"Autor modificado exitosamente de '{autor_actual}' a '{nuevo_autor}'.")
     except Exception as e:
         print(f"⚠️  Error al modificar autor: {e}")

@@ -1,5 +1,7 @@
 # registro.py
 
+from data import guardar_usuarios
+
 def registrarse(users):
     try:
         nombre = input("Ingrese su nombre de usuario: ").strip()
@@ -12,6 +14,7 @@ def registrarse(users):
             if not password:
                 raise ValueError("La contraseña no puede estar vacía.")
             users[nombre] = {"rol": "usuario", "password": password}
+            guardar_usuarios(users)
             print("✅ Usuario registrado con éxito.")
     except ValueError as e:
         print(f"⚠️ Error: {e}")
