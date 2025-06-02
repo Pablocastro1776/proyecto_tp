@@ -1,148 +1,149 @@
 import re
-from data import generos, guardar_peliculas, guardar_usuarios
+import os
+from data import generos, guardar_usuarios
 
 
-def agregar_pelicula(peliculas):
-    print("\n" + "-" * 50)
-    print("🎞️  CARGA DE NUEVA PELÍCULA".center(50))
-    print("-" * 50)
-
-    while True:
-        try:
-            nombre = input("🎬 Nombre: ").strip()
-            if not nombre:
-                raise ValueError("El nombre no puede estar vacío.")
-            break
-        except ValueError as e:
-            print(f"⚠️  Error: {e}")
-
-    while True:
-        try:
-            autor = input("🎬 Director: ").strip()
-            if not autor:
-                raise ValueError("El director no puede estar vacío.")
-            break
-        except ValueError as e:
-            print(f"⚠️  Error: {e}")
-
-    while True:
-        try:
-            anio = input("📅 Año de estreno: ").strip()
-            if not anio.isdigit() or len(anio) != 4:
-                raise ValueError("Ingresá un año válido de 4 cifras.")
-            break
-        except ValueError as e:
-            print(f"⚠️  Error: {e}")
-
-    print("🎭 Seleccione un género:")
-    for clave, valor in generos.items():
-        print(f"{clave}. {valor}")
-    while True:
-        try:
-            opcion_genero = input("Ingrese el número del género: ").strip()
-            if opcion_genero not in generos:
-                raise ValueError("Número de género inválido.")
-            genero = generos[opcion_genero]
-            break
-        except ValueError as e:
-            print(f"⚠️  {e}")
-
-    nueva_peli = [nombre, autor, anio, genero]
-    peliculas.append(nueva_peli)
-    guardar_peliculas(peliculas)
-    print("✅ Película agregada con éxito.")
-
-
-def eliminar_pelicula(peliculas):
+def agregar_pelicula_txt():
     try:
-        patron = input("Escribe parte del nombre de la película a eliminar: ")
-        regex = re.compile(f".*{patron}.*", re.IGNORECASE)
-        coincidencias = [p for p in peliculas if regex.search(p[0])]
+        nombre = input("🎬 Nombre: ").strip()
+        if not nombre:
+            raise ValueError("El nombre no puede estar vacío.")
 
-        if not coincidencias:
-            print("No se encontraron coincidencias.")
-            return
+        director = input("🎬 Director: ").strip()
+        if not director:
+            raise ValueError("El director no puede estar vacío.")
 
-        print("Películas encontradas:")
-        for idx, peli in enumerate(coincidencias):
-            print(f"{idx+1}. {peli[0]} - Director: {peli[1]}")
+        anio = input("📅 Año: ").strip()
+        if not anio.isdigit() or len(anio) != 4:
+            raise ValueError("El año debe ser numérico y de 4 dígitos.")
 
-        seleccion = input("Seleccioná el número de la película a eliminar (o enter para cancelar): ")
-        if seleccion.isdigit():
-            seleccion = int(seleccion)
-            if 1 <= seleccion <= len(coincidencias):
-                peli_eliminada = coincidencias[seleccion - 1]
-                peliculas.remove(peli_eliminada)
-                guardar_peliculas(peliculas)
-                print(f"Película eliminada: {peli_eliminada[0]}")
-            else:
-                print("Selección inválida.")
-        else:
-            print("Operación cancelada.")
+        # Selección de género
+        print("🎭 Géneros disponibles:")
+        for clave, valor in generos.items():
+            print(f"{clave}. {valor}")
+
+        opcion_genero = input("Seleccione el número del género: ").strip()
+        if opcion_genero not in generos:
+            raise ValueError("Opción de género inválida.")
+
+        genero = generos[opcion_genero]
+        nueva_linea = f"{nombre}|{director}|{anio}|{genero}\n"
+
+        f = open("peliculas.txt", "a", encoding="utf-8")
+        try:
+            f.write(nueva_linea)
+            print("✅ Película agregada correctamente.")
+        finally:
+            f.close()
+    except ValueError as ve:
+        print(f"⚠️ Error: {ve}")
     except Exception as e:
-        print(f"⚠️  Error inesperado: {e}")
+        print(f"❌ Error inesperado: {e}")
 
 
-def listar_peliculas(peliculas):
+
+def eliminar_pelicula_txt():
     try:
-        if not peliculas:
-            print("No hay películas cargadas.")
+        patron = input("🔎 Ingrese parte del nombre de la película a eliminar: ").strip().lower()
+        if not patron:
+            raise ValueError("El nombre a buscar no puede estar vacío.")
+
+        encontrada = False
+        original = open("peliculas.txt", "r", encoding="utf-8")
+        temporal = open("peliculas_temp.txt", "w", encoding="utf-8")
+
+        try:
+            for linea in original:
+                campos = linea.strip().split("|")
+                if len(campos) == 4 and patron in campos[0].lower():
+                    print(f"🗑️ Eliminando: {campos[0]}")
+                    encontrada = True
+                    continue  # No copiamos esta línea → se elimina
+                temporal.write(linea)
+        finally:
+            original.close()
+            temporal.close()
+
+        os.remove("peliculas.txt")
+        os.rename("peliculas_temp.txt", "peliculas.txt")
+
+        if not encontrada:
+            print("⚠️ No se encontró ninguna película con ese nombre.")
         else:
-            print("\nLista de películas:")
-            for idx, peli in enumerate(peliculas):
-                print(f"{idx+1}. {peli[0]} - {peli[1]} ({peli[2]}) - Género: {peli[3]}")
+            print("✅ Película eliminada exitosamente.")
+    except ValueError as ve:
+        print(f"⚠️ Error: {ve}")
     except Exception as e:
-        print(f"⚠️  Error al listar películas: {e}")
+        print(f"❌ Error inesperado: {e}")
 
 
-def modificar_pelicula(peliculas):
+def listar_peliculas():
     try:
-        patron = input("Escribí parte del nombre de la película a modificar: ")
-        regex = re.compile(f".*{patron}.*", re.IGNORECASE)
-        coincidencias = [p for p in peliculas if regex.search(p[0])]
-
-        if not coincidencias:
-            print("No se encontraron coincidencias.")
-            return
-
-        print("Películas encontradas:")
-        for idx, peli in enumerate(coincidencias):
-            print(f"{idx+1}. {peli[0]} - Director: {peli[1]}")
-
-        seleccion = input("Seleccioná el número de la película a modificar (o enter para cancelar): ")
-        if seleccion.isdigit():
-            seleccion = int(seleccion)
-            if 1 <= seleccion <= len(coincidencias):
-                peli = coincidencias[seleccion - 1]
-                print(f"Modificando: {peli[0]}")
-                nuevo_nombre = input("Nuevo nombre (o enter para mantener actual): ")
-                nuevo_autor = input("Nuevo autor/director (o enter para mantener actual): ")
-                nuevo_anio = input("Nuevo año (o enter para mantener actual): ")
-
-                nuevo_genero = ""
-                print("🎭 Seleccione nuevo género (o enter para mantener actual):")
-                for clave, valor in generos.items():
-                    print(f"{clave}. {valor}")
-                opcion_genero = input("Número de género: ").strip()
-                if opcion_genero in generos:
-                    nuevo_genero = generos[opcion_genero]
-
-                if nuevo_nombre:
-                    peli[0] = nuevo_nombre
-                if nuevo_autor:
-                    peli[1] = nuevo_autor
-                if nuevo_anio:
-                    peli[2] = nuevo_anio
-                if nuevo_genero:
-                    peli[3] = nuevo_genero
-                guardar_peliculas(peliculas)
-                print("Película modificada con éxito.")
-            else:
-                print("Selección inválida.")
-        else:
-            print("Operación cancelada.")
+        f = open("peliculas.txt", "r", encoding="utf-8")
+        try:
+            vacio = True
+            for idx, linea in enumerate(f, start=1):
+                campos = linea.strip().split("|")
+                if len(campos) == 4:
+                    print(f"{idx}. {campos[0]} - {campos[1]} ({campos[2]}) - Género: {campos[3]}")
+                    vacio = False
+            if vacio:
+                print("⚠️ No hay películas registradas.")
+        finally:
+            f.close()
     except Exception as e:
-        print(f"⚠️  Error al modificar película: {e}")
+        print(f"⚠️ Error al listar películas: {e}")
+
+
+
+def modificar_pelicula_txt():
+    patron = input("🔎 Ingrese parte del nombre de la película a modificar: ").strip().lower()
+    modificada = False
+
+    try:
+        original = open("peliculas.txt", "r", encoding="utf-8")
+        temporal = open("peliculas_temp.txt", "w", encoding="utf-8")
+
+        try:
+            for linea in original:
+                campos = linea.strip().split("|")
+                if len(campos) == 4 and patron in campos[0].lower():
+                    print(f"✏️ Modificando: {campos[0]}")
+                    nuevo_nombre = input("Nuevo nombre (enter para mantener): ").strip() or campos[0]
+                    nuevo_director = input("Nuevo director (enter para mantener): ").strip() or campos[1]
+
+                    nuevo_anio = input("Nuevo año (enter para mantener): ").strip()
+                    if nuevo_anio and (not nuevo_anio.isdigit() or len(nuevo_anio) != 4):
+                        raise ValueError("El año debe tener 4 dígitos.")
+                    nuevo_anio = nuevo_anio or campos[2]
+
+                    print("🎭 Géneros disponibles (enter para mantener actual):")
+                    for clave, valor in generos.items():
+                        print(f"{clave}. {valor}")
+                    opcion_genero = input("Seleccione el número del género: ").strip()
+                    nuevo_genero = generos.get(opcion_genero, campos[3])
+
+                    nueva_linea = f"{nuevo_nombre}|{nuevo_director}|{nuevo_anio}|{nuevo_genero}\n"
+                    temporal.write(nueva_linea)
+                    modificada = True
+                else:
+                    temporal.write(linea)
+        finally:
+            original.close()
+            temporal.close()
+
+        os.remove("peliculas.txt")
+        os.rename("peliculas_temp.txt", "peliculas.txt")
+
+        if modificada:
+            print("✅ Película modificada con éxito.")
+        else:
+            print("⚠️ No se encontró la película.")
+    except ValueError as ve:
+        print(f"⚠️ Error de validación: {ve}")
+    except Exception as e:
+        print(f"❌ Error inesperado: {e}")
+
 
 
 def crear_usuario(users):
@@ -210,33 +211,67 @@ def listar_usuarios(users):
         print(f"⚠️  Error al listar usuarios: {e}")
 
 
-def listar_autores(peliculas):
+def listar_autores_txt():
     try:
-        autores = set(peli[1] for peli in peliculas)
-        print("\nAutores registrados en el sistema:")
-        for autor in sorted(autores):
-            print(f"- {autor}")
+        autores = set()
+        f = open("peliculas.txt", "r", encoding="utf-8")
+        try:
+            for linea in f:
+                campos = linea.strip().split("|")
+                if len(campos) == 4:
+                    autores.add(campos[1])
+        finally:
+            f.close()
+
+        if autores:
+            print("\n🧑‍🎬 Autores/Directores registrados en el sistema:")
+            for autor in sorted(autores):
+                print(f"- {autor}")
+        else:
+            print("⚠️ No hay autores registrados aún.")
     except Exception as e:
-        print(f"⚠️  Error al listar autores: {e}")
+        print(f"⚠️ Error al listar autores: {e}")
 
-
-def modificar_autor(peliculas):
+def modificar_autor_txt():
     try:
-        autor_actual = input("Nombre actual del autor/director a modificar: ")
-        encontrado = any(peli[1] == autor_actual for peli in peliculas)
-        if not encontrado:
-            print("No se encontraron películas con ese autor.")
-            return
+        autor_actual = input("Nombre actual del autor/director a modificar: ").strip()
+        if not autor_actual:
+            raise ValueError("El nombre del autor no puede estar vacío.")
 
-        nuevo_autor = input("Nuevo nombre del autor/director: ")
-        for peli in peliculas:
-            if peli[1] == autor_actual:
-                peli[1] = nuevo_autor
-        guardar_peliculas(peliculas)
-        print(f"Autor modificado exitosamente de '{autor_actual}' a '{nuevo_autor}'.")
+        encontrado = False
+
+        original = open("peliculas.txt", "r", encoding="utf-8")
+        temporal = open("peliculas_temp.txt", "w", encoding="utf-8")
+
+        try:
+            for linea in original:
+                campos = linea.strip().split("|")
+                if len(campos) == 4:
+                    if campos[1].lower() == autor_actual.lower():
+                        if not encontrado:
+                            print(f"🛠️  Modificando películas de: {autor_actual}")
+                            nuevo_autor = input("Nuevo nombre del autor/director: ").strip()
+                            if not nuevo_autor:
+                                raise ValueError("El nuevo nombre del autor no puede estar vacío.")
+                        campos[1] = nuevo_autor
+                        encontrado = True
+                    nueva_linea = "|".join(campos) + "\n"
+                    temporal.write(nueva_linea)
+        finally:
+            original.close()
+            temporal.close()
+
+        os.remove("peliculas.txt")
+        os.rename("peliculas_temp.txt", "peliculas.txt")
+
+        if encontrado:
+            print(f"✅ Autor modificado exitosamente de '{autor_actual}' a '{nuevo_autor}'.")
+        else:
+            print("⚠️ No se encontraron películas con ese autor.")
+    except ValueError as ve:
+        print(f"⚠️ Error: {ve}")
     except Exception as e:
-        print(f"⚠️  Error al modificar autor: {e}")
-
+        print(f"❌ Error inesperado: {e}")
 
 def listar_generos(peliculas):
     try:

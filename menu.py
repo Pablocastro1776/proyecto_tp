@@ -1,7 +1,7 @@
 # menu.py
 from viewer import ver_pelicula, ver_valoraciones_personales, ver_puntuacion_pelicula
 from search import buscar_pelicula, buscar_por_autor, buscar_por_genero
-from admin import agregar_pelicula, eliminar_pelicula, modificar_pelicula, listar_peliculas, crear_usuario, modificar_usuario, eliminar_usuario, listar_usuarios, listar_autores, modificar_autor, listar_generos
+from admin import agregar_pelicula_txt, eliminar_pelicula_txt, modificar_pelicula_txt, listar_peliculas, crear_usuario, modificar_usuario, eliminar_usuario, listar_usuarios, listar_autores_txt, modificar_autor_txt, listar_generos
 from utilidades import ordenar_peliculas_por_anio, peliculas_del_director, mostrar_info_basica, mostrar_generos_unicos, top_3_peliculas
 
 def menu(usuario_actual, users, peliculas, valoraciones):
@@ -38,27 +38,27 @@ def menu(usuario_actual, users, peliculas, valoraciones):
 
         # Funciones comunes
         if opcion == "1":
-            buscar_pelicula(peliculas)
+            buscar_pelicula()
         elif opcion == "2":
-            ver_pelicula(peliculas, valoraciones, usuario_actual)
+            ver_pelicula(valoraciones, usuario_actual)
         elif opcion == "3":
             ver_valoraciones_personales(valoraciones, usuario_actual)
         elif opcion == "4":
-            ver_puntuacion_pelicula(peliculas, valoraciones)
+            ver_puntuacion_pelicula() 
         elif opcion == "5":
-            buscar_por_autor(peliculas)
+            buscar_por_autor()
         elif opcion == "6":
-            buscar_por_genero(peliculas)
+            buscar_por_genero()
 
         # Funciones de análisis
         elif opcion == "7":
-            ordenar_peliculas_por_anio(peliculas)
+            ordenar_peliculas_por_anio()
         elif opcion == "8":
-            peliculas_del_director(peliculas)
+            peliculas_del_director()
         elif opcion == "9":
-            mostrar_info_basica(peliculas)
+            mostrar_info_basica()
         elif opcion == "10":
-            mostrar_generos_unicos(peliculas)
+            mostrar_generos_unicos()
         elif opcion == "11":
             top_3_peliculas(valoraciones)
 
@@ -132,9 +132,9 @@ def menu_autores(peliculas):
         print("0. Volver")
         opcion = input("Seleccione una opción: ")
         if opcion == "1":
-            listar_autores(peliculas)
+            listar_autores_txt()
         elif opcion == "2":
-            modificar_autor(peliculas)
+            modificar_autor_txt()
         elif opcion == "0":
             break
         else:

@@ -1,70 +1,95 @@
 # search.py
 import re
 from data import generos
+import json
 
-def buscar_pelicula(peliculas):
+def iterar_peliculas():
+    f = open("peliculas.txt", "r", encoding="utf-8")
     try:
-        patron = input("Escribe parte del nombre de la película: ")
+        for linea in f:
+            campos = linea.strip().split("|")
+            if len(campos) == 4:
+                yield campos
+    finally:
+        f.close()
+
+def iterar_valoraciones():
+    f = open("valoraciones.json", "r")
+    try:
+        datos = json.load(f)
+        for val in datos:
+            yield val  # val = [usuario, pelicula, puntuacion]
+    finally:
+        f.close()
+
+def buscar_pelicula():
+    try:
+        patron = input("🔎 Ingresá parte del nombre de la película: ").strip()
+        if not patron:
+            raise ValueError("Debés ingresar al menos una letra.")
         regex = re.compile(f".*{patron}.*", re.IGNORECASE)
-        coincidencias = [p for p in peliculas if regex.search(p[0])]
+        coincidencias = []
 
-        if not coincidencias:
-            print("No se encontraron coincidencias.")
+        for peli in iterar_peliculas():
+            if regex.search(peli[0]):
+                coincidencias.append(peli)
+
+        if coincidencias:
+            print("📋 Coincidencias:")
+            for idx, peli in enumerate(coincidencias, start=1):
+                print(f"{idx}. {peli[0]} - Director: {peli[1]}")
         else:
-            print("¿Te referías a alguna de estas?")
-            for idx, peli in enumerate(coincidencias):
-                print(f"{idx+1}. {peli[0]} - Director: {peli[1]}")
-
-            seleccion = input("Seleccioná el número si era alguna (o enter para salir): ")
-            if seleccion.isdigit():
-                seleccion = int(seleccion)
-                if 1 <= seleccion <= len(coincidencias):
-                    peli = coincidencias[seleccion - 1]
-                    print(f"Seleccionaste: {peli[0]} de {peli[1]} ({peli[2]})")
-                else:
-                    print("Selección inválida.")
-            else:
-                print("Búsqueda cancelada.")
+            print("⚠️ No se encontraron coincidencias.")
+    except ValueError as ve:
+        print(f"⚠️ Error: {ve}")
     except Exception as e:
-        print(f"⚠️ Error al buscar película: {e}")
+        print(f"❌ Error inesperado: {e}")
 
 
-def buscar_por_autor(peliculas):
+def buscar_por_autor():
     try:
-        autor = input("Escribí el nombre (o parte) del autor/director: ")
+        autor = input("🧑‍🎬 Ingresá parte del nombre del director: ").strip()
+        if not autor:
+            raise ValueError("Ingresá un nombre válido.")
         regex = re.compile(f".*{autor}.*", re.IGNORECASE)
-        coincidencias = [p for p in peliculas if regex.search(p[1])]
+        encontrados = []
 
-        if not coincidencias:
-            print("No se encontraron películas con ese autor.")
-        else:
-            print("Películas encontradas:")
-            for peli in coincidencias:
+        for peli in iterar_peliculas():
+            if regex.search(peli[1]):
+                encontrados.append(peli)
+
+        if encontrados:
+            print("🎬 Películas encontradas:")
+            for peli in encontrados:
                 print(f"- {peli[0]} ({peli[2]}) - Género: {peli[3]}")
-    except Exception as e:
-        print(f"⚠️ Error al buscar por autor: {e}")
-
-
-def buscar_por_genero(peliculas):
-    try:
-        print("🎭 Seleccione un género para buscar:")
-        for clave, valor in generos.items():
-            print(f"{clave}. {valor}")
-        while True:
-            opcion_genero = input("Número de género: ").strip()
-            if opcion_genero in generos:
-                genero = generos[opcion_genero]
-                break
-            else:
-                print("Opción inválida. Ingresá un número válido.")
-
-        coincidencias = [p for p in peliculas if p[3] == genero]
-
-        if not coincidencias:
-            print("No se encontraron películas de ese género.")
         else:
-            print("Películas encontradas:")
-            for peli in coincidencias:
-                print(f"- {peli[0]} ({peli[2]}) - Director: {peli[1]}")
+            print("⚠️ No se encontraron películas de ese autor.")
     except Exception as e:
-        print(f"⚠️ Error al buscar por género: {e}")
+        print(f"❌ Error al buscar por autor: {e}")
+
+
+def buscar_por_genero():
+    try:
+        print("🎭 Seleccione un género:")
+        for k, v in generos.items():
+            print(f"{k}. {v}")
+
+        opcion = input("Número de género: ").strip()
+        if opcion not in generos:
+            raise ValueError("Género inválido.")
+
+        genero_objetivo = generos[opcion]
+        encontrados = []
+
+        for peli in iterar_peliculas():
+            if peli[3] == genero_objetivo:
+                encontrados.append(peli)
+
+        if encontrados:
+            print(f"🎬 Películas del género {genero_objetivo}:")
+            for peli in encontrados:
+                print(f"- {peli[0]} ({peli[2]}) - Director: {peli[1]}")
+        else:
+            print("⚠️ No se encontraron películas en ese género.")
+    except Exception as e:
+        print(f"❌ Error en búsqueda por género: {e}")

@@ -5,7 +5,7 @@ import os
 
 # Archivos
 USERS_FILE = "users.json"
-PELICULAS_FILE = "peliculas.json"
+PELICULAS_FILE = "peliculas.txt"
 VALORACIONES_FILE = "valoraciones.json"
 
 # Inicialización de datos si los archivos no existen
@@ -18,15 +18,14 @@ def cargar_datos():
             f.close()
 
     if not os.path.exists(PELICULAS_FILE):
-        f = open(PELICULAS_FILE, "w")
+        f = open(PELICULAS_FILE, "w", encoding="utf-8")
         try:
-            json.dump([
-                ["Titanic", "James Cameron", "1997", "Romance"],
-                ["Inception", "Christopher Nolan", "2010", "Ciencia Ficción"],
-                ["Gladiator", "Ridley Scott", "2000", "Acción"]
-            ], f)
+            f.write("Titanic|James Cameron|1997|Romance\n")
+            f.write("Inception|Christopher Nolan|2010|Ciencia Ficción\n")
+            f.write("Gladiator|Ridley Scott|2000|Acción\n")
         finally:
             f.close()
+
 
     if not os.path.exists(VALORACIONES_FILE):
         f = open(VALORACIONES_FILE, "w")
@@ -43,12 +42,18 @@ def cargar_usuarios():
     finally:
         f.close()
 
-def cargar_peliculas():
-    f = open(PELICULAS_FILE, "r")
+def buscar_pelicula_por_nombre(nombre_buscado):
+    f = open("peliculas.txt", "r", encoding="utf-8")
     try:
-        return json.load(f)
+        for linea in f:
+            campos = linea.strip().split("|")
+            if len(campos) == 4 and nombre_buscado.lower() in campos[0].lower():
+                print(f"Encontrada: {campos}")
+                return
     finally:
         f.close()
+
+
 
 def cargar_valoraciones():
     f = open(VALORACIONES_FILE, "r")
@@ -65,13 +70,6 @@ def guardar_usuarios(users):
     finally:
         f.close()
 
-def guardar_peliculas(peliculas):
-    f = open(PELICULAS_FILE, "w")
-    try:
-        json.dump(peliculas, f)
-    finally:
-        f.close()
-
 def guardar_valoraciones(valoraciones):
     f = open(VALORACIONES_FILE, "w")
     try:
@@ -85,3 +83,23 @@ generos = {
     "11": "Fantasía", "12": "Historia", "13": "Musical", "14": "Misterio", "15": "Romance",
     "16": "Suspenso", "17": "Terror", "18": "Guerra", "19": "Western", "20": "Deporte"
 }
+
+def iterar_peliculas():
+    f = open("peliculas.txt", "r", encoding="utf-8")
+    try:
+        for linea in f:
+            campos = linea.strip().split("|")
+            if len(campos) == 4:
+                yield campos
+    finally:
+        f.close()
+
+def iterar_valoraciones():
+    import json
+    f = open("valoraciones.json", "r")
+    try:
+        datos = json.load(f)
+        for val in datos:
+            yield val
+    finally:
+        f.close()
