@@ -1,3 +1,5 @@
+#admin.py
+
 import re
 import os
 from data import generos, guardar_usuarios
@@ -273,7 +275,7 @@ def modificar_autor_txt():
     except Exception as e:
         print(f"❌ Error inesperado: {e}")
 
-def listar_generos(peliculas):
+def listar_generos():
     try:
         print("\nGéneros disponibles en el sistema:")
         for genero in sorted(set(generos.values())):

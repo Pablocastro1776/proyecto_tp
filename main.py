@@ -8,7 +8,8 @@ if __name__ == "__main__":
     users = cargar_usuarios()
     valoraciones = cargar_valoraciones()
 
-    inicio(users, [], valoraciones)  
+    inicio(users, valoraciones)
+ 
 
     guardar_usuarios(users)
     guardar_valoraciones(valoraciones)

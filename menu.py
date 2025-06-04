@@ -4,7 +4,7 @@ from search import buscar_pelicula, buscar_por_autor, buscar_por_genero
 from admin import agregar_pelicula_txt, eliminar_pelicula_txt, modificar_pelicula_txt, listar_peliculas, crear_usuario, modificar_usuario, eliminar_usuario, listar_usuarios, listar_autores_txt, modificar_autor_txt, listar_generos
 from utilidades import ordenar_peliculas_por_anio, peliculas_del_director, mostrar_info_basica, mostrar_generos_unicos, top_3_peliculas
 
-def menu(usuario_actual, users, peliculas, valoraciones):
+def menu(usuario_actual, users, valoraciones):
     while True:
         print("\n" + "=" * 50)
         print("📽️  BIENVENIDO AL SISTEMA DE PELÍCULAS".center(50))
@@ -64,13 +64,13 @@ def menu(usuario_actual, users, peliculas, valoraciones):
 
         # Submenús del administrador
         elif opcion == "12" and users[usuario_actual]["rol"] == "admin":
-            menu_peliculas(peliculas)
+            menu_peliculas()
         elif opcion == "13" and users[usuario_actual]["rol"] == "admin":
             menu_usuarios(users)
         elif opcion == "14" and users[usuario_actual]["rol"] == "admin":
-            menu_autores(peliculas)
+            menu_autores()
         elif opcion == "15" and users[usuario_actual]["rol"] == "admin":
-            menu_generos(peliculas)
+            menu_generos()
 
         elif opcion == "0":
             print("Cerrando sesión...")
@@ -80,7 +80,7 @@ def menu(usuario_actual, users, peliculas, valoraciones):
 
 # SUBMENÚS
 
-def menu_peliculas(peliculas):
+def menu_peliculas():
     while True:
         print("\n🎞️  GESTIÓN DE PELÍCULAS")
         print("1. Agregar Película")
@@ -90,17 +90,18 @@ def menu_peliculas(peliculas):
         print("0. Volver")
         opcion = input("Seleccione una opción: ")
         if opcion == "1":
-            agregar_pelicula(peliculas)
+            agregar_pelicula_txt()
         elif opcion == "2":
-            modificar_pelicula(peliculas)
+            modificar_pelicula_txt()
         elif opcion == "3":
-            eliminar_pelicula(peliculas)
+            eliminar_pelicula_txt()
         elif opcion == "4":
-            listar_peliculas(peliculas)
+            listar_peliculas()
         elif opcion == "0":
             break
         else:
             print("Opción inválida.")
+
 
 def menu_usuarios(users):
     while True:
@@ -124,7 +125,7 @@ def menu_usuarios(users):
         else:
             print("Opción inválida.")
 
-def menu_autores(peliculas):
+def menu_autores():
     while True:
         print("\n🎬  GESTIÓN DE AUTORES")
         print("1. Ver Autores")
@@ -140,14 +141,15 @@ def menu_autores(peliculas):
         else:
             print("Opción inválida.")
 
-def menu_generos(peliculas):
+
+def menu_generos():
     while True:
         print("\n🎭  GESTIÓN DE GÉNEROS")
         print("1. Ver Géneros Disponibles")
         print("0. Volver")
         opcion = input("Seleccione una opción: ")
         if opcion == "1":
-            listar_generos(peliculas)
+            listar_generos()
         elif opcion == "0":
             break
         else:

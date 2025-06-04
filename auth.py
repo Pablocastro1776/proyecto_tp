@@ -1,9 +1,9 @@
 # auth.py
 
-def inicio(users, peliculas, valoraciones):
-    from menu import menu
-    from registro import registrarse, iniciar_sesion
+from menu import menu
+from registro import registrarse, iniciar_sesion
 
+def inicio(users, valoraciones):
     usuario_actual = None
 
     while True:
@@ -24,7 +24,7 @@ def inicio(users, peliculas, valoraciones):
             elif opcion == "2":
                 usuario_actual = iniciar_sesion(users)
                 if usuario_actual:
-                    menu(usuario_actual, users, peliculas, valoraciones)
+                    menu(usuario_actual, users, valoraciones)
 
             elif opcion == "3":
                 print("Saliendo del sistema...")
