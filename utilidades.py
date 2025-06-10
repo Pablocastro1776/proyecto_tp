@@ -1,5 +1,5 @@
 #utilidades.py
-from data import generos
+from data import iterar_generos
 
 def ordenar_peliculas_por_anio():
     try:

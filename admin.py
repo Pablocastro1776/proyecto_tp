@@ -1,9 +1,11 @@
 #admin.py
 
+import json
 import re
 import os
-from data import generos, guardar_usuarios
+from data import cargar_generos, guardar_usuarios,iterar_generos, guardar_generos
 
+GENEROS_FILE = "generos.json"
 
 def agregar_pelicula_txt():
     try:
@@ -19,16 +21,16 @@ def agregar_pelicula_txt():
         if not anio.isdigit() or len(anio) != 4:
             raise ValueError("El año debe ser numérico y de 4 dígitos.")
 
-        # Selección de género
         print("🎭 Géneros disponibles:")
-        for clave, valor in generos.items():
+        genero_dict = dict(iterar_generos())
+        for clave, valor in genero_dict.items():
             print(f"{clave}. {valor}")
 
         opcion_genero = input("Seleccione el número del género: ").strip()
-        if opcion_genero not in generos:
+        if opcion_genero not in genero_dict:
             raise ValueError("Opción de género inválida.")
 
-        genero = generos[opcion_genero]
+        genero = genero_dict[opcion_genero]
         nueva_linea = f"{nombre}|{director}|{anio}|{genero}\n"
 
         f = open("peliculas.txt", "a", encoding="utf-8")
@@ -41,8 +43,6 @@ def agregar_pelicula_txt():
         print(f"⚠️ Error: {ve}")
     except Exception as e:
         print(f"❌ Error inesperado: {e}")
-
-
 
 def eliminar_pelicula_txt():
     try:
@@ -97,7 +97,6 @@ def listar_peliculas():
         print(f"⚠️ Error al listar películas: {e}")
 
 
-
 def modificar_pelicula_txt():
     patron = input("🔎 Ingrese parte del nombre de la película a modificar: ").strip().lower()
     modificada = False
@@ -120,10 +119,12 @@ def modificar_pelicula_txt():
                     nuevo_anio = nuevo_anio or campos[2]
 
                     print("🎭 Géneros disponibles (enter para mantener actual):")
-                    for clave, valor in generos.items():
+                    genero_dict = dict(iterar_generos())
+                    for clave, valor in genero_dict.items():
                         print(f"{clave}. {valor}")
+
                     opcion_genero = input("Seleccione el número del género: ").strip()
-                    nuevo_genero = generos.get(opcion_genero, campos[3])
+                    nuevo_genero = genero_dict.get(opcion_genero, campos[3])
 
                     nueva_linea = f"{nuevo_nombre}|{nuevo_director}|{nuevo_anio}|{nuevo_genero}\n"
                     temporal.write(nueva_linea)
@@ -145,6 +146,7 @@ def modificar_pelicula_txt():
         print(f"⚠️ Error de validación: {ve}")
     except Exception as e:
         print(f"❌ Error inesperado: {e}")
+
 
 
 
@@ -277,8 +279,111 @@ def modificar_autor_txt():
 
 def listar_generos():
     try:
-        print("\nGéneros disponibles en el sistema:")
-        for genero in sorted(set(generos.values())):
-            print(f"- {genero}")
+        print("\n🎭 Géneros disponibles en el sistema:")
+        vacio = True
+        for clave, valor in iterar_generos():
+            print(f"{clave}. {valor}")
+            vacio = False
+        if vacio:
+            print("⚠️ No hay géneros cargados en el sistema.")
     except Exception as e:
-        print(f"⚠️  Error al listar géneros: {e}")
+        print(f"❌ Error al listar géneros: {e}")
+
+def crear_genero():
+    try:
+        clave = input("🔢 Ingresá el número del nuevo género: ").strip()
+        if not clave.isdigit():
+            raise ValueError("La clave debe ser un número.")
+        
+        # Verificar si ya existe
+        for k, _ in iterar_generos():
+            if k == clave:
+                print("⚠️ Esa clave ya está registrada.")
+                return
+        
+        valor = input("🎭 Ingresá el nombre del género: ").strip()
+        if not valor:
+            raise ValueError("El nombre del género no puede estar vacío.")
+        
+        # Leer y agregar
+        f = open("generos.json", "r", encoding="utf-8")
+        try:
+            datos = json.load(f)
+        finally:
+            f.close()
+        
+        datos[clave] = valor
+        
+        f = open("generos.json", "w", encoding="utf-8")
+        try:
+            json.dump(datos, f, ensure_ascii=False, indent=2)
+        finally:
+            f.close()
+        
+        print("✅ Género agregado correctamente.")
+    except ValueError as ve:
+        print(f"⚠️ Error: {ve}")
+    except Exception as e:
+        print(f"❌ Error inesperado: {e}")
+        
+def eliminar_genero():
+    try:
+        datos = cargar_generos()
+
+        if not datos:
+            print("⚠️ No hay géneros para eliminar.")
+            return
+
+        print("\n🎭 Géneros disponibles:")
+        for clave, valor in datos.items():
+            print(f"{clave}. {valor}")
+
+        clave = input("🔢 Ingresá el número del género a eliminar: ").strip()
+
+        if clave not in datos:
+            print("⚠️ Género no encontrado.")
+            return
+
+        confirm = input(f"¿Seguro que querés eliminar el género '{datos[clave]}'? (s/n): ").strip().lower()
+        if confirm != "s":
+            print("❌ Operación cancelada.")
+            return
+
+        del datos[clave]
+        guardar_generos(datos)
+        print("✅ Género eliminado correctamente.")
+
+    except Exception as e:
+        print(f"❌ Error al eliminar género: {e}")
+
+def modificar_genero():
+    try:
+        # Mostrar géneros actuales
+        print("\n🎭 Géneros disponibles:")
+        generos_dict = {}
+        for clave, valor in iterar_generos():
+            print(f"{clave}. {valor}")
+            generos_dict[clave] = valor
+
+        # Pedir clave a modificar
+        clave_a_modificar = input("🔧 Ingresá el número del género a modificar: ").strip()
+        if clave_a_modificar not in generos_dict:
+            raise ValueError("⚠️ Esa clave no existe.")
+
+        # Mostrar género actual y pedir nuevo nombre
+        print(f"🔁 Género actual: {generos_dict[clave_a_modificar]}")
+        nuevo_nombre = input("✏️ Nuevo nombre del género: ").strip()
+        if not nuevo_nombre:
+            raise ValueError("⚠️ El nombre del género no puede estar vacío.")
+
+        # Actualizar y guardar
+        generos_dict[clave_a_modificar] = nuevo_nombre
+        guardar_generos(generos_dict)
+        print("✅ Género modificado con éxito.")
+
+    except ValueError as ve:
+        print(f"{ve}")
+    except Exception as e:
+        print(f"❌ Error inesperado: {e}")
+
+

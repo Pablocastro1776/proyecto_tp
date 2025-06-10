@@ -1,6 +1,6 @@
 # viewer.py
 import re
-from data import guardar_valoraciones
+from data import guardar_valoraciones, iterar_peliculas, iterar_valoraciones
     
 def ver_pelicula(valoraciones, usuario_actual):
     try:

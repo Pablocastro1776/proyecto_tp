@@ -7,6 +7,8 @@ import os
 USERS_FILE = "users.json"
 PELICULAS_FILE = "peliculas.txt"
 VALORACIONES_FILE = "valoraciones.json"
+GENEROS_FILE = "generos.json"
+
 
 # Inicialización de datos si los archivos no existen
 def cargar_datos():
@@ -18,14 +20,17 @@ def cargar_datos():
             f.close()
 
     if not os.path.exists(PELICULAS_FILE):
+        peliculas_iniciales = [
+            ["Titanic", "James Cameron", "1997", "Romance"],
+            ["Inception", "Christopher Nolan", "2010", "Ciencia Ficción"],
+            ["Gladiator", "Ridley Scott", "2000", "Acción"]
+        ]
         f = open(PELICULAS_FILE, "w", encoding="utf-8")
         try:
-            f.write("Titanic|James Cameron|1997|Romance\n")
-            f.write("Inception|Christopher Nolan|2010|Ciencia Ficción\n")
-            f.write("Gladiator|Ridley Scott|2000|Acción\n")
+            for peli in peliculas_iniciales:
+                f.write("|".join(peli) + "\n")
         finally:
             f.close()
-
 
     if not os.path.exists(VALORACIONES_FILE):
         f = open(VALORACIONES_FILE, "w")
@@ -34,6 +39,20 @@ def cargar_datos():
         finally:
             f.close()
 
+    if not os.path.exists(GENEROS_FILE):
+        generos_por_defecto = {
+            "1": "Acción", "2": "Aventura", "3": "Animación", "4": "Biografía",
+            "5": "Ciencia Ficción", "6": "Comedia", "7": "Crimen", "8": "Documental",
+            "9": "Drama", "10": "Familia", "11": "Fantasía", "12": "Historia",
+            "13": "Musical", "14": "Misterio", "15": "Romance", "16": "Suspenso",
+            "17": "Terror", "18": "Guerra", "19": "Western", "20": "Deporte"
+        }
+        f = open(GENEROS_FILE, "w", encoding="utf-8")
+        try:
+            json.dump(generos_por_defecto, f, ensure_ascii=False, indent=2)
+        finally:
+            f.close()
+            
 # Funciones para cargar
 def cargar_usuarios():
     f = open(USERS_FILE, "r")
@@ -53,6 +72,13 @@ def buscar_pelicula_por_nombre(nombre_buscado):
     finally:
         f.close()
 
+
+def cargar_generos():
+    f = open(GENEROS_FILE, "r", encoding="utf-8")
+    try:
+        return json.load(f)
+    finally:
+        f.close()
 
 
 def cargar_valoraciones():
@@ -77,13 +103,15 @@ def guardar_valoraciones(valoraciones):
     finally:
         f.close()
 
-generos = {
-    "1": "Acción", "2": "Aventura", "3": "Animación", "4": "Biografía", "5": "Ciencia Ficción",
-    "6": "Comedia", "7": "Crimen", "8": "Documental", "9": "Drama", "10": "Familia",
-    "11": "Fantasía", "12": "Historia", "13": "Musical", "14": "Misterio", "15": "Romance",
-    "16": "Suspenso", "17": "Terror", "18": "Guerra", "19": "Western", "20": "Deporte"
-}
 
+def guardar_generos(diccionario_generos):
+    f = open(GENEROS_FILE, "w", encoding="utf-8")
+    try:
+        json.dump(diccionario_generos, f, ensure_ascii=False, indent=2)
+    finally:
+        f.close()
+
+#Funciones para iterar
 def iterar_peliculas():
     f = open("peliculas.txt", "r", encoding="utf-8")
     try:
@@ -95,7 +123,6 @@ def iterar_peliculas():
         f.close()
 
 def iterar_valoraciones():
-    import json
     f = open("valoraciones.json", "r")
     try:
         datos = json.load(f)
@@ -103,3 +130,12 @@ def iterar_valoraciones():
             yield val
     finally:
         f.close()
+        
+def iterar_generos():
+    f = open(GENEROS_FILE, "r", encoding="utf-8")
+    try:
+        for clave, valor in json.load(f).items():
+            yield clave, valor
+    finally:
+        f.close()
+

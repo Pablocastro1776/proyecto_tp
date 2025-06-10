@@ -1,7 +1,7 @@
 # menu.py
 from viewer import ver_pelicula, ver_valoraciones_personales, ver_puntuacion_pelicula
 from search import buscar_pelicula, buscar_por_autor, buscar_por_genero
-from admin import agregar_pelicula_txt, eliminar_pelicula_txt, modificar_pelicula_txt, listar_peliculas, crear_usuario, modificar_usuario, eliminar_usuario, listar_usuarios, listar_autores_txt, modificar_autor_txt, listar_generos
+from admin import agregar_pelicula_txt, eliminar_pelicula_txt, modificar_pelicula_txt, listar_peliculas, crear_usuario, modificar_usuario, eliminar_usuario, listar_usuarios, listar_autores_txt, modificar_autor_txt, listar_generos, crear_genero, eliminar_genero, modificar_genero
 from utilidades import ordenar_peliculas_por_anio, peliculas_del_director, mostrar_info_basica, mostrar_generos_unicos, top_3_peliculas
 
 def menu(usuario_actual, users, valoraciones):
@@ -146,10 +146,19 @@ def menu_generos():
     while True:
         print("\n🎭  GESTIÓN DE GÉNEROS")
         print("1. Ver Géneros Disponibles")
+        print("2. Crear Nuevo Género")
+        print("3. Eliminar Género")
+        print("4. Modificar Género")
         print("0. Volver")
         opcion = input("Seleccione una opción: ")
         if opcion == "1":
             listar_generos()
+        elif opcion == "2":
+            crear_genero()
+        elif opcion == "3":
+            eliminar_genero()
+        elif opcion == "4":
+            modificar_genero()
         elif opcion == "0":
             break
         else:
