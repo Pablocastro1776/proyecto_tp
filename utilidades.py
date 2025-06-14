@@ -3,16 +3,19 @@ from data import iterar_generos
 
 def ordenar_peliculas_por_anio():
     try:
+        peliculas = iterar_peliculas()
+        if not peliculas:
+            return  # Ya imprimió mensaje de que no hay películas
+
         peliculas_validas = sorted(
-            (p for p in iterar_peliculas() if p[2].isdigit()),
+            (p for p in peliculas if p[2].isdigit()),
             key=lambda x: x[2]
         )
         print("\n📅 Películas ordenadas por año:")
         for peli in peliculas_validas:
-            print(f"- {peli[0]} ({peli[2]}) - Director: {peli[1]}")
+            print(f"Título: {peli[0]}, Director: {peli[1]}, Año: {peli[2]}, Género: {peli[3]}")
     except Exception as e:
         print(f"❌ Error al ordenar películas: {e}")
-
 
 def peliculas_del_director():
     try:
@@ -82,12 +85,18 @@ def top_3_peliculas(valoraciones):
     for nombre, promedio in top_3:
         print(f"- {nombre}: {promedio:.2f} puntos")
 
-def iterar_peliculas():
-    f = open("peliculas.txt", "r", encoding="utf-8")
+def iterar_peliculas(f=None):
+    if f is None:
+        f = open("peliculas.txt", "r", encoding="utf-8")
+
     try:
-        for linea in f:
-            campos = linea.strip().split("|")
-            if len(campos) == 4:
-                yield campos
+        linea = f.readline()
+        if not linea:
+            return 
+        campos = linea.strip().split("|")
+        if len(campos) == 4:
+            print(f"Título: {campos[0]}, Director: {campos[1]}, Año: {campos[2]}, Género: {campos[3]}")
+        iterar_peliculas(f)
     finally:
-        f.close()
+        if f and not f.closed:
+            f.close()

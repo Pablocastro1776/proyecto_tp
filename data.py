@@ -113,14 +113,29 @@ def guardar_generos(diccionario_generos):
 
 #Funciones para iterar
 def iterar_peliculas():
-    f = open("peliculas.txt", "r", encoding="utf-8")
     try:
-        for linea in f:
-            campos = linea.strip().split("|")
-            if len(campos) == 4:
-                yield campos
-    finally:
+        f = open("peliculas.txt", "r", encoding="utf-8")
+        return _leer_lineas_recursivo(f)
+    except Exception as e:
+        print(f"❌ Error al leer el archivo: {e}")
+        return []
+        
+def _leer_lineas_recursivo(f, acumulador=None):
+    if acumulador is None:
+        acumulador = []
+
+    linea = f.readline()
+    if not linea:
         f.close()
+        if not acumulador:
+            print("⚠️ Ya no hay más películas almacenadas.")
+        return acumulador
+
+    campos = linea.strip().split("|")
+    if len(campos) == 4:
+        acumulador.append(campos)
+
+    return _leer_lineas_recursivo(f, acumulador)
 
 def iterar_valoraciones():
     f = open("valoraciones.json", "r")

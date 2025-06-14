@@ -1,6 +1,6 @@
 # search.py
 import re
-from data import iterar_generos
+from data import iterar_generos, cargar_generos
 import json
 
 def iterar_peliculas():
@@ -70,17 +70,21 @@ def buscar_por_autor():
 
 def buscar_por_genero():
     try:
+        generos = cargar_generos()
+
+        if not generos:
+            print("⚠️ No hay géneros disponibles.")
+            return
+
         print("🎭 Seleccione un género:")
-        generos_dict = {}  # Para mapear clave -> valor
-        for clave, valor in iterar_generos():
+        for clave, valor in generos.items():
             print(f"{clave}. {valor}")
-            generos_dict[clave] = valor
 
         opcion = input("Número de género: ").strip()
-        if opcion not in generos_dict:
+        if opcion not in generos:
             raise ValueError("Género inválido.")
 
-        genero_objetivo = generos_dict[opcion]
+        genero_objetivo = generos[opcion]
         encontrados = []
 
         for peli in iterar_peliculas():
@@ -88,10 +92,12 @@ def buscar_por_genero():
                 encontrados.append(peli)
 
         if encontrados:
-            print(f"\n🎬 Películas del género {genero_objetivo}:")
+            print(f"🎬 Películas del género {genero_objetivo}:")
             for peli in encontrados:
                 print(f"- {peli[0]} ({peli[2]}) - Director: {peli[1]}")
         else:
             print("⚠️ No se encontraron películas en ese género.")
+    except ValueError as ve:
+        print(f"⚠️ Error: {ve}")
     except Exception as e:
         print(f"❌ Error en búsqueda por género: {e}")
