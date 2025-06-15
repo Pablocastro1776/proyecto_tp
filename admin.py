@@ -46,6 +46,8 @@ def agregar_pelicula_txt():
 
     except ValueError as ve:
         print(f"⚠️ Error: {ve}")
+    except FileNotFoundError:
+        print("❌ Archivo no encontrado.")
     except Exception as e:
         print(f"❌ Error inesperado: {e}")
 
@@ -80,6 +82,10 @@ def eliminar_pelicula_txt():
             print("✅ Película eliminada exitosamente.")
     except ValueError as ve:
         print(f"⚠️ Error: {ve}")
+    except PermissionError:
+        print("❌ Permiso denegado al acceder o modificar archivos.")
+    except UnicodeDecodeError:
+        print("❌ Error de codificación al leer el archivo.")
     except Exception as e:
         print(f"❌ Error inesperado: {e}")
 
@@ -91,18 +97,34 @@ def listar_peliculas():
             print("\n📃 Lista de películas:")
             listar_peliculas_recursiva(f)
         finally:
-            f.close()
+            try:
+                f.close()
+            except OSError as close_error:
+                print(f"⚠️ Error al cerrar el archivo: {close_error}")
+    except FileNotFoundError:
+        print("❌ El archivo de películas no fue encontrado.")
+    except OSError as os_err:
+        print(f"❌ Error de lectura del archivo: {os_err}")
     except Exception as e:
         print(f"⚠️ Error al listar películas: {e}")
 
 def listar_peliculas_recursiva(f, idx=1):
-    linea = f.readline()
-    if not linea:
-        return
-    campos = linea.strip().split("|")
-    if len(campos) == 4:
-        print(f"{idx}. {campos[0]} - {campos[1]} ({campos[2]}) - Género: {campos[3]}")
-    listar_peliculas_recursiva(f, idx + 1)
+    try:
+        linea = f.readline()
+        if not linea:
+            return
+        campos = linea.strip().split("|")
+        if len(campos) == 4:
+            print(f"{idx}. {campos[0]} - {campos[1]} ({campos[2]}) - Género: {campos[3]}")
+        else:
+            print(f"⚠️ Línea con formato inválido en índice {idx}.")
+        listar_peliculas_recursiva(f, idx + 1)
+    except UnicodeDecodeError as ude:
+        print(f"⚠️ Error al decodificar una línea del archivo: {ude}")
+    except RecursionError:
+        print("❌ Error: Se alcanzó el límite de recursividad.")
+    except Exception as e:
+        print(f"❌ Error inesperado al procesar la película en índice {idx}: {e}")
 
 def modificar_pelicula_txt():
     try:
@@ -160,17 +182,31 @@ def modificar_pelicula_txt():
 def crear_usuario(users):
     try:
         nombre = input("Nuevo nombre de usuario: ").strip()
+        if not nombre:
+            raise ValueError("El nombre de usuario no puede estar vacío.")
         if nombre in users:
             print("El usuario ya existe.")
             return
-        password = input("Contraseña para el nuevo usuario: ")
+
+        password = input("Contraseña para el nuevo usuario: ").strip()
+        if not password:
+            raise ValueError("La contraseña no puede estar vacía.")
+
         rol = input("Rol (usuario/admin): ").strip().lower()
         if rol not in ["usuario", "admin"]:
             print("Rol inválido. Se asigna 'usuario' por defecto.")
             rol = "usuario"
+
         users[nombre] = {"rol": rol, "password": password}
         guardar_usuarios(users)
-        print("Usuario creado correctamente.")
+        print("✅ Usuario creado correctamente.")
+
+    except ValueError as ve:
+        print(f"⚠️ Error de validación: {ve}")
+    except KeyError as ke:
+        print(f"❌ Error con clave: {ke}")
+    except TypeError as te:
+        print(f"❌ Error de tipo de dato: {te}")
     except Exception as e:
         print(f"⚠️  Error al crear usuario: {e}")
 
@@ -191,6 +227,8 @@ def modificar_usuario(users):
             users[nombre]["rol"] = nuevo_rol
         guardar_usuarios(users)
         print("Usuario actualizado correctamente.")
+    except ValueError as ve:
+        print(f"⚠️ Error de validación: {ve}")
     except Exception as e:
         print(f"⚠️  Error al modificar usuario: {e}")
 
@@ -209,6 +247,8 @@ def eliminar_usuario(users):
                 print("Usuario eliminado correctamente.")
         else:
             print("Usuario no encontrado.")
+    except ValueError as ve:
+        print(f"⚠️ Error de validación: {ve}")
     except Exception as e:
         print(f"⚠️  Error al eliminar usuario: {e}")
 
